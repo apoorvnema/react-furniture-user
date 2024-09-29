@@ -1,0 +1,24 @@
+#alert-root {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: fit-content;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.swiper-button-next, .swiper-button-prev {
+    color: #3E2723; 
+    font-size: 18px;
+}
+
+.swiper-pagination-bullet {
+    background: #3E2723;
+}
+
+.swiper-pagination-bullet-active {
+    background: #ECEFF1; 
+}
