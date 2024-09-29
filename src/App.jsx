@@ -7,6 +7,7 @@ import Home from "./pages/Home"
 import { useSelector } from "react-redux"
 import { authAction } from './store/auth'
 import Signup from './pages/Signup'
+import ProductDetail from './pages/ProductDetail'
 
 function App() {
   const token = useSelector(state => state.auth.token);
@@ -22,6 +23,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="*" element={<Navigate to="/login" />} />

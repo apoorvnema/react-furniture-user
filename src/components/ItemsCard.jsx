@@ -6,6 +6,7 @@ import ProductForm from './UI/Form/ProductForm';
 import ApiManager from '../services/ApiManager';
 import CustomCard from './UI/Card';
 import Loader from './UI/Loader';
+import { useNavigate } from 'react-router-dom';
 
 const ItemsCard = ({ filter, search }) => {
     const isSmallScreen = useMediaQuery('(max-width:600px)');
@@ -15,9 +16,10 @@ const ItemsCard = ({ filter, search }) => {
     const [filteredItems, setFilteredItems] = useState([]);
     const [currentItem, setCurrentItem] = useState(null);
     const [loading, setLoading] = useState(false);
+    const navigation = useNavigate();
     const actions = [
-        { label: 'Show Details', onClick: (id) => handleUpdateItem(id) },
-        { label: 'Add to Cart', onClick: (id) => handleDeleteItem(id) },
+        { label: 'Show Details', onClick: (id) => handleProductDetails(id) },
+        { label: 'Add to Cart', onClick: (id) => handleAddToCart(id) },
     ];
 
     useEffect(() => {
@@ -38,34 +40,6 @@ const ItemsCard = ({ filter, search }) => {
         setFilteredItems(filteredByCategory);
     }, [filter, search, items]);
 
-    const handleUpdateProduct = async (product) => {
-        try {
-            const body = {
-                category: product?.category,
-                description: product?.description,
-                imageUrl: product?.imageUrl,
-                name: product?.name,
-                quantity: product?.quantity
-            }
-            const response = await ApiManager.updateProduct(product?.id, body);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            handleCloseUpdateModal();
-            fetchItems();
-        }
-    };
-
-    async function handleDeleteItem(id) {
-        try {
-            const response = await ApiManager.deleteProduct(id);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            fetchItems();
-        }
-    }
-
     const fetchItems = async () => {
         try {
             setLoading(true);
@@ -80,43 +54,18 @@ const ItemsCard = ({ filter, search }) => {
         }
     };
 
-    const handleAddItem = () => {
-        setCurrentItem(null);
-        setShowModal(true);
-    };
-
     const handleCloseModal = () => {
         setShowModal(false);
     };
 
-    const handleUpdateItem = (id) => {
+    const handleShowCart = () => {
+        setShowModal(true);
+    }
+
+    const handleProductDetails = (id) => {
         const itemToUpdate = items.find(([itemId]) => itemId === id)[1];
-        setCurrentItem({ id, ...itemToUpdate });
-        setShowUpdateModal(true);
-    };
-
-    const handleCloseUpdateModal = () => {
-        setShowUpdateModal(false);
-        setCurrentItem(null);
-    };
-
-    const handleAddProduct = async (product) => {
-        try {
-            const body = {
-                category: product?.category,
-                description: product?.description,
-                imageUrl: product?.imageUrl,
-                name: product?.name,
-                quantity: product?.quantity
-            }
-            const response = await ApiManager.addProduct(body);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            handleCloseModal();
-            fetchItems();
-        }
-    };
+        navigation(`/product/${id}`, { state: { items: itemToUpdate } });
+    }
 
     return (
         <>
@@ -154,16 +103,13 @@ const ItemsCard = ({ filter, search }) => {
                 color="primary"
                 aria-label="add"
                 style={{ position: 'fixed', bottom: '2rem', right: '2rem' }}
-                onClick={handleAddItem}
+                onClick={handleShowCart}
             >
                 <AddShoppingCartIcon />
                 {!isSmallScreen && <Typography sx={{ ml: 1, color: '#FFFFFF' }}>Show Cart</Typography>}
             </Fab>
             <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Add Item"} >
-                <ProductForm mode={"Add"} onSubmit={handleAddProduct} />
-            </TransitionsModal>
-            <TransitionsModal show={showUpdateModal} onClose={handleCloseUpdateModal} title={"Update Item"}>
-                <ProductForm mode={"Update"} onSubmit={handleUpdateProduct} initialValues={currentItem} />
+                <ProductForm mode={"Add"} onSubmit={()=>{}} />
             </TransitionsModal>
         </>
     );

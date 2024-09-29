@@ -16,7 +16,6 @@ import { useNavigate } from 'react-router-dom';
 import { authAction } from '../store/auth';
 import Footer from '../components/Footer';
 import SwiperNav from '../components/SwiperNav';
-import Loader from '../components/UI/Loader';
 import ItemsCard from '../components/ItemsCard';
 
 const Search = SearchStyle;
