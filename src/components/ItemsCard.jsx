@@ -1,27 +1,42 @@
 import { Fab, Typography, useMediaQuery } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import AddIcon from '@mui/icons-material/Add';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import TransitionsModal from './UI/Modal';
 import ProductForm from './UI/Form/ProductForm';
 import ApiManager from '../services/ApiManager';
 import CustomCard from './UI/Card';
 import Loader from './UI/Loader';
 
-const ItemsCard = ({ pathname }) => {
+const ItemsCard = ({ filter, search }) => {
     const isSmallScreen = useMediaQuery('(max-width:600px)');
     const [showModal, setShowModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [items, setItems] = useState([]);
+    const [filteredItems, setFilteredItems] = useState([]);
     const [currentItem, setCurrentItem] = useState(null);
     const [loading, setLoading] = useState(false);
     const actions = [
-        { label: 'Update Product', onClick: (id) => handleUpdateItem(id) },
-        { label: 'Delete Product', onClick: (id) => handleDeleteItem(id) },
+        { label: 'Show Details', onClick: (id) => handleUpdateItem(id) },
+        { label: 'Add to Cart', onClick: (id) => handleDeleteItem(id) },
     ];
 
     useEffect(() => {
         fetchItems();
     }, []);
+
+    useEffect(() => {
+        let filteredByCategory = items.filter(([id, item]) => 
+            item?.category.toLowerCase().includes(filter?.toLowerCase())
+        );
+        
+        if (search) {
+            filteredByCategory = filteredByCategory.filter(([id, item]) => 
+                item?.name.toLowerCase().includes(search?.toLowerCase())
+            );
+        }
+        
+        setFilteredItems(filteredByCategory);
+    }, [filter, search, items]);
 
     const handleUpdateProduct = async (product) => {
         try {
@@ -57,6 +72,7 @@ const ItemsCard = ({ pathname }) => {
             const response = await ApiManager.getProducts();
             const productsArray = Object.entries(response);
             setItems(productsArray);
+            setFilteredItems(productsArray);
         } catch (error) {
             console.log(error);
         } finally {
@@ -113,7 +129,7 @@ const ItemsCard = ({ pathname }) => {
                 paddingLeft: 10,
                 paddingRight: 10
             }}>
-                {items.map(([id, item]) => (
+                {filteredItems?.map(([id, item]) => (
                     <div key={id} style={{
                         flex: '1 1 30%',
                         minWidth: '250px',
@@ -140,10 +156,10 @@ const ItemsCard = ({ pathname }) => {
                 style={{ position: 'fixed', bottom: '2rem', right: '2rem' }}
                 onClick={handleAddItem}
             >
-                <AddIcon />
-                {!isSmallScreen && <Typography sx={{ ml: 1, color: '#FFFFFF' }}>Add Item</Typography>}
+                <AddShoppingCartIcon />
+                {!isSmallScreen && <Typography sx={{ ml: 1, color: '#FFFFFF' }}>Show Cart</Typography>}
             </Fab>
-            <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Add Item"}>
+            <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Add Item"} >
                 <ProductForm mode={"Add"} onSubmit={handleAddProduct} />
             </TransitionsModal>
             <TransitionsModal show={showUpdateModal} onClose={handleCloseUpdateModal} title={"Update Item"}>
