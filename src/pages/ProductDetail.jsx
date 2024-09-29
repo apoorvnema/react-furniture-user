@@ -41,9 +41,13 @@ export default function ProductDetail() {
         navigate('/login');
     }
 
+    const handleShowOrders = () => {
+        navigate('/orders');
+    }
+
     const handleLogout = () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('name');
+        localStorage.removeItem('userId');
         localStorage.removeItem('email');
         dispatch(authAction.logout());
     }
@@ -73,7 +77,7 @@ export default function ProductDetail() {
             onClose={handleMenuClose}
         >
             {token ? [
-                <MenuItem key="profile" onClick={handleMenuClose}>Profile</MenuItem>,
+                <MenuItem key="orders" onClick={handleShowOrders}>orders</MenuItem>,
                 <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
             ] : <MenuItem onClick={handleLogin}>Login</MenuItem>}
         </Menu>

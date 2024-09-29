@@ -4,11 +4,13 @@ import { Button, TextField, Box, Typography, IconButton, List, ListItem, ListIte
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { cartAction } from '../../../store/cart';
+import ApiManager from '../../../services/ApiManager';
 
-const Cart = () => {
+const Cart = ({ handleCloseModal, fetchItems }) => {
   const dispatch = useDispatch();
   const cart = useSelector(state => state.cart);
   const [address, setAddress] = useState(cart.address || '');
+  const [name, setName] = useState(cart.name || '');
 
   const handleIncrement = (id) => {
     dispatch(cartAction.addToCart({ id, price: cart.items.find(item => item.id === id).price }));
@@ -22,12 +24,50 @@ const Cart = () => {
     setAddress(e.target.value);
   };
 
-  const handleBuyNow = () => {
-    if (address) {
-      console.log('Order placed with address:', cart);
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+  };
+
+  const handleBuyNow = async () => {
+    if (address && name) {
+      try {
+        const body = {
+          orderId: Math.random().toString(36).substr(2, 9),
+          userId: localStorage.getItem('userId') || 'Guest',
+          userName: name,
+          items: cart.items,
+          address: address,
+          email: localStorage.getItem('email') || 'Guest',
+          orderStatus: "Ordered",
+          orderDate: new Date(),
+          orderTotal: cart.orderTotal
+        }
+        const bodyQty = cart.items.map(item => ({ id: item?.id, quantity: item?.quantity, allowed: item?.allowedQuantity }));
+        bodyQty.forEach(async item => {
+          item.quantity = item.allowed - item.quantity;
+          await ApiManager.updateProductQuantity({ quantity: item.quantity }, item.id);
+        });
+        await ApiManager.placeOrder(body);
+        alert('Order Placed Successfully');
+      }
+      catch (error) {
+        console.log(error);
+      }
+      finally {
+        localStorage.setItem('address', address);
+        handleCloseModal();
+        dispatch(cartAction.clearCart());
+        fetchItems();
+      }
     } else {
-      alert('Please enter an address!');
+      alert('Please enter your name & address!');
     }
+  };
+
+  const handleSavedAddress = () => {
+    const savedAddress = localStorage.getItem('address');
+    if (!savedAddress) { alert('No saved address found'); return; }
+    setAddress(savedAddress);
   };
 
   return (
@@ -58,6 +98,15 @@ const Cart = () => {
             Total Amount: ₹{cart.orderTotal || 0}
           </Typography>
 
+          <TextField
+            label="Name"
+            value={name}
+            onChange={handleNameChange}
+            required
+            fullWidth
+            sx={{ marginY: 2 }}
+          />
+          <Button variant="outlined" onClick={handleSavedAddress}>Use Saved Address</Button>
           <TextField
             label="Delivery Address"
             multiline

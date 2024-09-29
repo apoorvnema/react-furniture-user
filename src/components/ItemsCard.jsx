@@ -116,7 +116,7 @@ const ItemsCard = ({ filter, search }) => {
                 {!isSmallScreen && <Typography sx={{ ml: 1, color: '#FFFFFF' }}>Show Cart</Typography>}
             </Fab>
             <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Your Cart"} >
-                <Cart onSubmit={()=>{}} />
+                <Cart handleCloseModal={handleCloseModal} fetchItems={fetchItems}/>
             </TransitionsModal>
         </>
     );

@@ -14,6 +14,18 @@ class ApiManager {
         const query = ApiEndpoints.getProducts();
         return ApiMethods.getMethod(query);
     }
+    static updateProductQuantity = (body, id) => {
+        const query = ApiEndpoints.updateProductQuantity(id);
+        return ApiMethods.patchMethod(query, body);
+    }
+    static placeOrder = (body) => {
+        const query = ApiEndpoints.placeOrder();
+        return ApiMethods.postMethod(query, body);
+    }
+    static getOrders = () => {
+        const query = ApiEndpoints.getOrders();
+        return ApiMethods.getMethod(query);
+    }
 }
 
 export default ApiManager;

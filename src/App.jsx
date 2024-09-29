@@ -1,23 +1,13 @@
-import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes } from "react-router-dom"
 import Login from "./pages/Login"
 import theme from "./assets/theme"
-import { Box, Button, ThemeProvider } from "@mui/material"
+import { ThemeProvider } from "@mui/material";
 import Home from "./pages/Home"
-import { useSelector } from "react-redux"
-import { authAction } from './store/auth'
 import Signup from './pages/Signup'
 import ProductDetail from './pages/ProductDetail'
+import Orders from "./pages/Orders";
 
 function App() {
-  const token = useSelector(state => state.auth.token);
-  const dispatch = useDispatch();
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('name');
-    localStorage.removeItem('email');
-    dispatch(authAction.logout());
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -26,7 +16,8 @@ function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="*" element={<Navigate to="/login" />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </ThemeProvider>
   )

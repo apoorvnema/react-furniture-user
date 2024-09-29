@@ -66,10 +66,10 @@ export default function Login() {
                 visible: true
             })
             localStorage.setItem('token', response.idToken);
-            localStorage.setItem('name', response.displayName);
+            localStorage.setItem('userId', response.localId);
             localStorage.setItem('email', response.email);
             dispatch(authAction.login({
-                name: response.displayName,
+                userId: response.localId,
                 token: response.idToken,
                 email: response.email
             }));

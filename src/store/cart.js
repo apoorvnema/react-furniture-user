@@ -3,11 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const cart = createSlice({
     name: "cart",
     initialState: {
-        address: null,
         items: [],
         orderTotal: 0,
-        orderStatus: null,
-        orderDate: null,
         totalQuantity: 0,
     },
     reducers: {
@@ -19,6 +16,7 @@ const cart = createSlice({
                 existingItem.quantity++;
                 existingItem.totalPrice += action.payload.price || 0;
             } else {
+                if(action.payload.allowedQuantity <= 0) {alert("This product is out of stock currently."); return;}
                 state.items.push({
                     ...action.payload,
                     quantity: 1,
