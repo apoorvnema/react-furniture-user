@@ -11,10 +11,8 @@ import { useNavigate } from 'react-router-dom';
 const ItemsCard = ({ filter, search }) => {
     const isSmallScreen = useMediaQuery('(max-width:600px)');
     const [showModal, setShowModal] = useState(false);
-    const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [items, setItems] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
-    const [currentItem, setCurrentItem] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigate();
     const actions = [
@@ -64,7 +62,7 @@ const ItemsCard = ({ filter, search }) => {
 
     const handleProductDetails = (id) => {
         const itemToUpdate = items.find(([itemId]) => itemId === id)[1];
-        navigation(`/product/${id}`, { state: { items: itemToUpdate } });
+        navigation(`/product/${id}`, { state: { item: itemToUpdate } });
     }
 
     return (
