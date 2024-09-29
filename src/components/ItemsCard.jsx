@@ -2,11 +2,13 @@ import { Fab, Typography, useMediaQuery } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import TransitionsModal from './UI/Modal';
-import ProductForm from './UI/Form/ProductForm';
+import Cart from './UI/Form/Cart';
 import ApiManager from '../services/ApiManager';
 import CustomCard from './UI/Card';
 import Loader from './UI/Loader';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { cartAction } from '../store/cart';
 
 const ItemsCard = ({ filter, search }) => {
     const isSmallScreen = useMediaQuery('(max-width:600px)');
@@ -15,6 +17,7 @@ const ItemsCard = ({ filter, search }) => {
     const [filteredItems, setFilteredItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigate();
+    const dispatch = useDispatch();
     const actions = [
         { label: 'Show Details', onClick: (id) => handleProductDetails(id) },
         { label: 'Add to Cart', onClick: (id) => handleAddToCart(id) },
@@ -62,7 +65,12 @@ const ItemsCard = ({ filter, search }) => {
 
     const handleProductDetails = (id) => {
         const itemToUpdate = items.find(([itemId]) => itemId === id)[1];
-        navigation(`/product/${id}`, { state: { item: itemToUpdate } });
+        navigation(`/product/${id}`, { state: { item: itemToUpdate, id:id } });
+    }
+
+    const handleAddToCart = (id) => {
+        const itemToAdd = items.find(([itemId]) => itemId === id)[1];
+        dispatch(cartAction.addToCart({...itemToAdd, id, allowedQuantity: itemToAdd?.quantity}));
     }
 
     return (
@@ -90,6 +98,7 @@ const ItemsCard = ({ filter, search }) => {
                             actions={actions}
                             quantity={item.quantity}
                             category={item.category}
+                            price={item.price}
                             id={id}
                         />
                     </div>
@@ -106,8 +115,8 @@ const ItemsCard = ({ filter, search }) => {
                 <AddShoppingCartIcon />
                 {!isSmallScreen && <Typography sx={{ ml: 1, color: '#FFFFFF' }}>Show Cart</Typography>}
             </Fab>
-            <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Add Item"} >
-                <ProductForm mode={"Add"} onSubmit={()=>{}} />
+            <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Your Cart"} >
+                <Cart onSubmit={()=>{}} />
             </TransitionsModal>
         </>
     );

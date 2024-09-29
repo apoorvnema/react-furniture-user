@@ -67,7 +67,7 @@ export default function Home() {
                 setFilter("2 door wardrobe");
                 break;
             case 3:
-                setFilter("3 door wardrobe");
+                setFilter("sliding wardrobe");
                 break;
             default:
                 setFilter("");

@@ -13,7 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { authAction } from '../store/auth';
 import TransitionsModal from '../components/UI/Modal';
-import ProductForm from '../components/UI/Form/ProductForm';
+import Cart from '../components/UI/Form/Cart';
+import { cartAction } from '../store/cart';
 
 export default function ProductDetail() {
     const isSmallScreen = useMediaQuery('(max-width:600px)');
@@ -25,6 +26,7 @@ export default function ProductDetail() {
     const isMenuOpen = Boolean(anchorEl);
     const token = useSelector(state => state.auth.token);
     const product = location.state?.item;
+    const id = location.state?.id;
     const dispatch = useDispatch();
 
     const handleProfileMenuOpen = (event) => {
@@ -131,11 +133,15 @@ export default function ProductDetail() {
                         {!isSmallScreen && <Typography sx={{ ml: 1, color: '#FFFFFF' }}>Show Cart</Typography>}
                     </Fab>
                 </Box>
-                <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Add Item"} >
-                    <ProductForm mode={"Add"} onSubmit={() => { }} />
+                <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Your Cart"} >
+                    <Cart mode={"Add"} onSubmit={() => { }} />
                 </TransitionsModal>
             </>
         );
+    }
+
+    const handleAddToCart = () => {
+        dispatch(cartAction.addToCart({...product, id,  allowedQuantity: product?.quantity}));
     }
 
     return (
@@ -194,7 +200,7 @@ export default function ProductDetail() {
                     <Typography variant="body1" sx={{ marginBottom: 1 }}>
                         {product.description}
                     </Typography>
-                    <Button type="submit" variant="contained" color="primary" sx={{ width: '20%' }}>
+                    <Button type="submit" variant="contained" color="primary" sx={{ width: 'fit-content' }} onClick={handleAddToCart}>
                         Add to Cart
                     </Button>
                 </Box>
@@ -210,8 +216,8 @@ export default function ProductDetail() {
                     {!isSmallScreen && <Typography sx={{ ml: 1, color: '#FFFFFF' }}>Show Cart</Typography>}
                 </Fab>
             </Box>
-            <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Add Item"} >
-                <ProductForm mode={"Add"} onSubmit={() => { }} />
+            <TransitionsModal show={showModal} onClose={handleCloseModal} title={"Your Cart"} >
+                <Cart mode={"Add"} onSubmit={() => { }} />
             </TransitionsModal>
         </>
     );

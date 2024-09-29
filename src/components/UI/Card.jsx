@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardMedia, Typography, CardActions, Button, Box } from '@mui/material';
 
-const CustomCard = ({ title, description, imageUrl, actions, quantity, category, id }) => {
+const CustomCard = ({ title, description, imageUrl, actions, quantity, category, id, price }) => {
     return (
         <Card sx={{ maxWidth: 345, borderRadius: '12px', boxShadow: 3 }}>
             {imageUrl && (
@@ -21,6 +21,9 @@ const CustomCard = ({ title, description, imageUrl, actions, quantity, category,
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', mt: 2 }}>
                     <Typography variant="body2" color="text.secondary" fontWeight="bold">
                         {quantity<=0 ? `Out of stock` : `Quantity: ${quantity}`}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" fontWeight="bold">
+                        Price: {price || 0}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" fontWeight="bold">
                         {category}
